@@ -30,6 +30,6 @@ public class Cano extends Retangulo {
 
     @Override
     public void aoColidir(Passaro passaro) {
-        passaro.setVivo(false);
+        passaro.morrer();
     }
 }

@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -30,7 +31,7 @@ public class ScreenSaver extends JFrame {
 
     private static final int CANVAS_WIDTH = 800;
     private static final int CANVAS_HEIGHT = 600;
-    private static final int CHAO_ALTURA = 40; // Novo: Altura do chão
+    private static final int CHAO_ALTURA = 40; 
     private static final int DELAY_MS = 16; 
 
     private ScreenSaverPanel canvas;
@@ -54,8 +55,12 @@ public class ScreenSaver extends JFrame {
     private class ScreenSaverPanel extends JPanel implements ActionListener {
 
         private Timer timer;
+        
+        /*********************************
+        ** ↓ Declare suas formas aqui ↓ **
+        *********************************/
         private List<Forma> formas = new ArrayList<>();
-        private List<Forma> nuvens = new ArrayList<>(); // Lista separada para as nuvens de fundo
+        private List<Forma> nuvens = new ArrayList<>(); 
         
         private Passaro jogador;
         private Image logo;
@@ -69,21 +74,23 @@ public class ScreenSaver extends JFrame {
         private int meiosPontos = 0; 
         private int velocidadeGlobal = -4; 
         
-        private boolean jogoIniciado = false; // Estado Inicial
+        private boolean jogoIniciado = false; 
         private boolean gameOver = false;
 
         public ScreenSaverPanel() {
             this.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
             this.setFocusable(true);
 
-            // Tenta carregar a imagem do Logo
             try {
-                logo = ImageIO.read(new File("src/image/logo.png"));
+                URL urlLogo = ScreenSaver.class.getResource("/image/logo.png");
+                logo = (urlLogo != null) ? ImageIO.read(urlLogo) : ImageIO.read(new File("src/image/logo.png"));
             } catch (Exception e) {
                 logo = null;
             }
 
-            // Inicializa as nuvens de fundo
+            /***********************************
+            ** ↓ Instancie suas formas aqui ↓ **
+            ***********************************/
             nuvens.add(new Nuvem(100, 80, 120, 60, -1));
             nuvens.add(new Nuvem(450, 120, 150, 75, -2));
             nuvens.add(new Nuvem(700, 50, 100, 50, -1));
@@ -108,7 +115,7 @@ public class ScreenSaver extends JFrame {
                 public void mouseReleased(MouseEvent e) { up = false; }
             });
 
-            reiniciarJogo(); // Prepara os dados, mas ainda não inicia
+            reiniciarJogo(); 
             this.timer = new Timer(DELAY_MS, this);
         }
 
@@ -118,7 +125,6 @@ public class ScreenSaver extends JFrame {
                 up = true;
             } else if (gameOver && puloPronto) {
                 reiniciarJogo();
-                jogoIniciado = true; 
             } else {
                 up = true;
             }
@@ -126,7 +132,7 @@ public class ScreenSaver extends JFrame {
 
         private void reiniciarJogo() {
             formas.clear();
-            jogador = new Passaro(150, 250, 50, 35, "src/image/flipbird.png");
+            jogador = new Passaro(150, 250, 52, 41, "image/flipbird.png");
             formas.add(jogador);
             
             pontuacao = 0;
@@ -134,6 +140,7 @@ public class ScreenSaver extends JFrame {
             velocidadeGlobal = -4;
             contadorFrames = 0;
             gameOver = false;
+            jogoIniciado = false;
             puloPronto = false; 
             up = false;
         }
@@ -141,7 +148,6 @@ public class ScreenSaver extends JFrame {
         private void gerarParDeCanos() {
             int espacoAbertura = 160; 
             int larguraCano = 70;
-            // Altura aleatória respeitando o chão
             int alturaCanoCima = 50 + (int)(Math.random() * (CANVAS_HEIGHT - CHAO_ALTURA - espacoAbertura - 100));
             
             Cano canoCima = new Cano(CANVAS_WIDTH, 0, larguraCano, alturaCanoCima, velocidadeGlobal);
@@ -162,7 +168,9 @@ public class ScreenSaver extends JFrame {
             
             if (!up) puloPronto = true; 
 
-            // As nuvens sempre se movem (mesmo na tela de título ou Game Over)
+            /******************************
+            ** ↓ Mova suas formas aqui ↓ **
+            ******************************/
             for (Forma n : nuvens) {
                 n.Mover(CANVAS_WIDTH, CANVAS_HEIGHT);
             }
@@ -187,7 +195,6 @@ public class ScreenSaver extends JFrame {
             for (int i = formas.size() - 1; i >= 0; i--) {
                 Forma f = formas.get(i);
                 
-                // Mover respeitando a altura do chão
                 f.Mover(CANVAS_WIDTH, CANVAS_HEIGHT - CHAO_ALTURA);
                 
                 if (f != jogador) {
@@ -198,7 +205,7 @@ public class ScreenSaver extends JFrame {
                         meiosPontos++;
                         if (meiosPontos % 2 == 0) { 
                             pontuacao++;
-                            if (pontuacao % 5 == 0) velocidadeGlobal--; 
+                            if (pontuacao % 5 == 0 && velocidadeGlobal > -10) velocidadeGlobal--; 
                         }
                     }
 
@@ -220,27 +227,25 @@ public class ScreenSaver extends JFrame {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             
-            // 1. Fundo Degradê (Céu)
             GradientPaint ceu = new GradientPaint(0, 0, new Color(135, 206, 235), 0, CANVAS_HEIGHT, new Color(255, 255, 255));
             g2d.setPaint(ceu);
             g2d.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-            // 2. Desenha Nuvens de Fundo
+            /*********************************
+            ** ↓ Desenhe suas formas aqui ↓ **
+            *********************************/
             for (Forma n : nuvens) { n.desenhar(g2d); }
 
-            // 3. Desenha Formas Ativas (Canos e Pássaro)
             for (Forma f : formas) { f.desenhar(g2d); }
 
-            // 4. Desenha o Chão
-            g2d.setColor(new Color(222, 184, 135)); // Cor Areia
+            g2d.setColor(new Color(222, 184, 135)); 
             g2d.fillRect(0, CANVAS_HEIGHT - CHAO_ALTURA, CANVAS_WIDTH, CHAO_ALTURA);
-            g2d.setColor(new Color(34, 139, 34)); // Grama no topo do chão
+            g2d.setColor(new Color(34, 139, 34)); 
             g2d.fillRect(0, CANVAS_HEIGHT - CHAO_ALTURA, CANVAS_WIDTH, 8);
 
-            // 5. HUD e Telas
             if (!jogoIniciado) {
                 if (logo != null) {
-                    g2d.drawImage(logo, (CANVAS_WIDTH - 250) / 2, 100, 250, 100, null);
+                    g2d.drawImage(logo, (CANVAS_WIDTH - 250) / 2, 120, 250, 39, null);
                 }
                 g2d.setColor(Color.DARK_GRAY);
                 g2d.setFont(new Font("Arial", Font.BOLD, 40));
@@ -254,7 +259,6 @@ public class ScreenSaver extends JFrame {
                 g2d.drawString("Pontos: " + pontuacao, 20, 40);
                 g2d.drawString("Recorde: " + recorde, 20, 70);
                 
-                // Texto sobreposto branco para dar destaque
                 g2d.setColor(Color.WHITE);
                 g2d.drawString("Pontos: " + pontuacao, 18, 38);
                 g2d.drawString("Recorde: " + recorde, 18, 68);

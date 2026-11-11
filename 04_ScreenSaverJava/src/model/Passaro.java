@@ -33,7 +33,7 @@ public class Passaro extends Personagem {
         if (getY() + getAltura() >= alturaTela) {
             setY(alturaTela - getAltura());
             setVelocidadeY(0);
-            setVivo(false);
+            morrer();
         }
     }
 
@@ -56,5 +56,5 @@ public class Passaro extends Personagem {
     }
 
     public boolean isVivo() { return vivo; }
-    public void setVivo(boolean vivo) { this.vivo = vivo; }
+    public void morrer() { vivo = false; }
 }

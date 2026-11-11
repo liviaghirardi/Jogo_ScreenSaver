@@ -13,7 +13,7 @@ Projeto desenvolvido para a disciplina de Programação Orientada a Objetos, uti
 | **Abstração** | Classe `model.Forma` | Criamos uma classe abstrata genérica que define os atributos e métodos base (x, y, `Mover`, `desenhar`) para tudo o que aparece na tela, sem se preocupar com os detalhes de desenho de cada forma específica. |
 | **Encapsulamento** | Todas as classes do `model` | Todos os atributos (`x`, `y`, `velocidade`, `vivo`) são `private`. O acesso é feito via Getters e Setters, permitindo validações (ex: impedir largura negativa) e protegendo a física do jogo de alterações indevidas. |
 | **Herança** | `Passaro`, `Cano`, `Nuvem` | `Passaro` estende `Personagem`, herdando a capacidade de desenhar sprites. `Cano` estende `Retangulo`. Evitamos repetição de código reutilizando a estrutura visual já existente e adicionando apenas comportamentos novos (como a gravidade). |
-| **Polimorfismo** | `ScreenSaver.java` e `aoColidir()` | No Game Loop, usamos uma única lista `List<Forma>` genérica. Chamamos `Mover()` e `desenhar()` sem precisar saber se é um pássaro, nuvem ou cano. O método `aoColidir()` é reescrito (`@Override`): canos dão Game Over, nuvens não fazem nada. |
+| **Polimorfismo** | `ScreenSaver.java` e `aoColidir()` | No Game Loop, usamos listas `List<Forma>` genéricas: `formas` (pássaro e canos) e `nuvens` (fundo, separada para não contar pontos). Chamamos `Mover()` e `desenhar()` sem precisar saber o tipo de cada objeto. O método `aoColidir()` é reescrito (`@Override`): o `Cano` causa Game Over e a `Nuvem` sobrescreve sem efeito, pois fica fora do teste de colisão. |
 
 ---
 
@@ -41,6 +41,11 @@ classDiagram
         +desenhar(Graphics2D g) void
     }
     
+    class Quadrado {
+        +setLargura(int largura) void
+        +setAltura(int altura) void
+    }
+
     class Cano {
         +Cano(...)
         +Mover(int larguraTela, int alturaTela) void
@@ -52,6 +57,11 @@ classDiagram
         +desenhar(Graphics2D g) void
     }
     
+    class Circulo {
+        +setLargura(int largura) void
+        +setAltura(int altura) void
+    }
+
     class Nuvem {
         +Nuvem(...)
         +Mover(int larguraTela, int alturaTela) void
@@ -71,11 +81,14 @@ classDiagram
         +pular() void
         +Mover(int larguraTela, int alturaTela) void
         +desenhar(Graphics2D g) void
+        +morrer() void
     }
 
     Forma <|-- Retangulo : Herança
+    Retangulo <|-- Quadrado : Especialização (Base)
     Retangulo <|-- Cano : Especialização
     Forma <|-- Elipse : Herança
+    Elipse <|-- Circulo : Especialização (Base)
     Elipse <|-- Nuvem : Especialização
     Forma <|-- Personagem : Herança
     Personagem <|-- Passaro : Especialização

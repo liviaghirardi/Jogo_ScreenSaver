@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.net.URL;
 import javax.imageio.ImageIO;
 
 public class Personagem extends Forma {
@@ -17,7 +18,8 @@ public class Personagem extends Forma {
 
     private void carregarImagem(String caminho) {
         try {
-            sprite = ImageIO.read(new File(caminho));
+            URL url = Personagem.class.getResource("/" + caminho);
+            sprite = (url != null) ? ImageIO.read(url) : ImageIO.read(new File("src/" + caminho));
         } catch (Exception e) {
             System.out.println("Não foi possível carregar a imagem: " + caminho);
             sprite = null;
