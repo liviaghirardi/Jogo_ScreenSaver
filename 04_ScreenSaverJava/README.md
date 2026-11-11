@@ -92,3 +92,6 @@ classDiagram
     Elipse <|-- Nuvem : Especialização
     Forma <|-- Personagem : Herança
     Personagem <|-- Passaro : Especialização
+```
+
+> **Observação:** `Quadrado` e `Circulo` vêm da base feita em aula (o protetor de tela) e foram mantidas na hierarquia, mas não são usadas no jogo. As classes `Nuvem`, `Cano` e `Passaro` são as que dão vida ao Flappy Bird.
