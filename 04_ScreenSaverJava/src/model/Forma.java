@@ -13,7 +13,9 @@ public abstract class Forma {
 
     public Forma(int x, int y, int largura, int altura, Color cor) {
         this.x = x; this.y = y;
-        setLargura(largura); setAltura(altura);
+        // Atribuição direta: chamar setters sobrescrevíveis no construtor é arriscado
+        if (largura > 0) this.largura = largura;
+        if (altura > 0) this.altura = altura;
         this.cor = cor;
         this.velocidadeX = 5; this.velocidadeY = 5;
     }

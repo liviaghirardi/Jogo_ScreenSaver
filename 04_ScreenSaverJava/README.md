@@ -57,10 +57,6 @@ classDiagram
         +desenhar(Graphics2D g) void
     }
     
-    class Quadrado {
-        +setLargura(int largura) void
-        +setAltura(int altura) void
-    }
 
     class Cano {
         -boolean emCima
@@ -119,7 +115,6 @@ classDiagram
     }
 
     Forma <|-- Retangulo : Herança
-    Retangulo <|-- Quadrado : Especialização (Base)
     Retangulo <|-- Cano : Especialização
     Forma <|-- Elipse : Herança
     Elipse <|-- Circulo : Especialização (Base)
@@ -129,4 +124,4 @@ classDiagram
     Personagem ..> Recursos : carrega sprite
 ```
 
-> **Observação:** `Quadrado` e `Circulo` vêm da base feita em aula (o protetor de tela) e foram mantidas na hierarquia, mas não são usadas no jogo. As classes `Nuvem`, `Cano` e `Passaro` são as que dão vida ao Flappy Bird.
+> **Observação:** A classe `Circulo` vem da base feita em aula (o protetor de tela) e foi mantida na hierarquia, mas não é usada no jogo. As classes `Nuvem`, `Cano` e `Passaro` são as que dão vida ao Flappy Bird.
